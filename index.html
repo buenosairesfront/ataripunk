@@ -189,6 +189,61 @@ tbody tr:hover td{background:var(--pl)}
 .bands i{width:7px; height:16px; border:1px solid var(--pf)}
 .foot{margin-top:24px; font:500 10.5px/1.5 var(--mono); color:var(--paperMute); text-transform:uppercase; letter-spacing:.06em; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px}
 .toast{position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--paperFg); color:var(--paper); padding:8px 14px; font:600 12px var(--mono); text-transform:uppercase; letter-spacing:.06em; z-index:20}
+.scrollhint{display:none; font:600 11px/1.2 var(--mono); color:var(--pm); text-transform:uppercase; letter-spacing:.06em; margin:6px 0 0}
+/* celular: todo más grande y legible */
+@media (max-width:640px){
+  body{font-size:15px}
+  .panel>.in{padding:14px 13px 16px}
+  .logo{height:46px}
+  .title b{white-space:normal; font-size:clamp(22px,6.4vw,30px); line-height:.95}
+  .title small{flex-wrap:wrap; gap:2px 10px; font-size:11px; white-space:normal}
+  .play{height:46px; padding:0 14px; font-size:14px}
+  .meta{font-size:11px}
+  #scope{height:260px}
+  .readout span{font-size:11px}
+  .readout b{font-size:23px; white-space:normal; line-height:1.05; padding-bottom:2px}
+  .num{font-size:56px}
+  .shm h2{font-size:30px}
+  .lbl{font-size:12px}
+  .note,#escalera .note{font-size:13.5px; line-height:1.5}
+  .empty{font-size:12.5px}
+  .btn{font-size:13.5px; min-height:42px; padding:9px 13px}
+  #gatebtn{min-height:40px; font-size:12.5px; padding:8px 12px}
+  .vrow input[type=text],.combos input{min-height:42px; font-size:15px; flex:1 1 120px; width:auto}
+  .schwrap,.boardwrap{-webkit-overflow-scrolling:touch}
+  #sch,#board{min-width:780px}
+  #sch .ref{font-size:19px} #sch .val{font-size:12.5px} #sch .pin,#sch .pn{font-size:11px}
+  #sch .chipt{font-size:26px} #sch .chips{font-size:12.5px}
+  .scrollhint{display:block}
+  .pbt{font-size:19px; min-height:44px; padding:8px 10px}
+  .pbt small{font-size:12px}
+  .edname{font-size:24px}
+  .edmini{height:120px}
+  .role,.eff{font-size:14px}
+  .code{font-size:12px}
+  .bigval{font-size:clamp(52px,15vw,68px)}
+  .live span{font-size:11px} .live b{font-size:25px}
+  input[type=range]{height:30px}
+  .pinlist{grid-template-columns:1fr; font-size:13.5px}
+  .pinlist div{padding:7px 8px}
+  #pad{height:clamp(260px,78vw,420px)}
+  .padhud b{font-size:44px}
+  .padhud span{font-size:12px}
+  .padax{font-size:11.5px}
+  .knobs{gap:10px}
+  .knob svg{max-width:84px}
+  .knob b{font-size:19px}
+  .knob span{font-size:12px}
+  #stair{height:250px}
+  #tocar .num,#escalera .num{font-size:48px}
+  .chipc button{min-height:40px; font-size:17px}
+  .chipc button small{font-size:11px}
+  table{font-size:14px}
+  th{font-size:11.5px}
+  td.r{font-size:20px} td.v{font-size:19px}
+  .foot{font-size:11.5px}
+  .toast{font-size:13px}
+}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important} }
 </style>
 
@@ -525,11 +580,11 @@ function bindPad(){const cv=$('#pad');const at=e=>{const r=cv.getBoundingClientR
   const up=()=>{padDown=false;sendAudio();drawPad();};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);}
 
 /* ===================== 03 · escalera ===================== */
-function drawStair(){const cv=$('#stair');if(!cv)return;const r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+function drawStair(){const cv=$('#stair');if(!cv)return;const r=cv.getBoundingClientRect(),dpr=(devicePixelRatio||1),fz=innerWidth<=640?1.2:1;cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
   const g=cv.getContext('2d'),w=cv.width,hh=cv.height,fg=cssv('--paperFg'),mute=cssv('--paperMute'),line=cssv('--paperLine'),mag=cssv('--mag'),cya=cssv('--cya');
   const N=360,P=[];let lo=1e9,hi=0;for(let i=0;i<=N;i++){const c=calc(V,i/N,POS.VR2);P.push(c);lo=Math.min(lo,c.fo);hi=Math.max(hi,c.fo);}
-  lo/=1.25;hi*=3;const L=36*dpr,R=10*dpr,T=14*dpr,B=26*dpr;const X=p=>L+(w-L-R)*p,Y=f=>T+(hh-T-B)*(1-Math.log(f/lo)/Math.log(hi/lo));
-  g.font=`${10*dpr}px "IBM Plex Mono",monospace`;g.textBaseline='middle';
+  lo/=1.25;hi*=3;const L=36*fz*dpr,R=(fz>1?20:10)*dpr,T=14*dpr,B=26*fz*dpr;const X=p=>L+(w-L-R)*p,Y=f=>T+(hh-T-B)*(1-Math.log(f/lo)/Math.log(hi/lo));
+  g.font=`${10*fz*dpr}px "IBM Plex Mono",monospace`;g.textBaseline='middle';
   const ticks=[];for(let d=0;d<6;d++)for(const m of [1,2,5]){const f=m*Math.pow(10,d);if(f>=lo&&f<=hi)ticks.push(f);}
   for(const f of ticks){const y=Y(f);g.strokeStyle=line;g.lineWidth=1;g.beginPath();g.moveTo(L,y);g.lineTo(w-R,y);g.stroke();g.fillStyle=mute;g.textAlign='right';g.fillText(f>=1000?f/1000+'k':f,L-5*dpr,y);}
   g.textAlign='center';for(let i=0;i<=10;i++){const x=X(i/10);g.fillStyle=mute;g.fillText(i*10+'%',x,hh-B/2);g.strokeStyle=line;g.beginPath();g.moveTo(x,T);g.lineTo(x,hh-B);g.stroke();}
@@ -539,11 +594,11 @@ function drawStair(){const cv=$('#stair');if(!cv)return;const r=cv.getBoundingCl
   // salida por tramos de igual división
   let i0=0;for(let i=1;i<=N+1;i++){if(i===N+1||P[i].n!==P[i0].n){const n=P[i0].n;g.strokeStyle=n%2?mag:fg;g.lineWidth=3*dpr;g.beginPath();
       for(let j=i0;j<i;j++){const x=X(j/N),y=Y(P[j].fo);j===i0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
-      const xm=X((i0+i-1)/2/N);if(X((i-1)/N)-X(i0/N)>22*dpr){g.fillStyle=n%2?mag:fg;g.font=`700 ${12*dpr}px "Barlow Condensed",sans-serif`;g.fillText('÷'+n,xm,Y(P[Math.floor((i0+i-1)/2)].fo)-12*dpr);g.font=`${10*dpr}px "IBM Plex Mono",monospace`;}
+      const xm=X((i0+i-1)/2/N);if(X((i-1)/N)-X(i0/N)>22*dpr){g.fillStyle=n%2?mag:fg;g.font=`700 ${12*fz*dpr}px "Barlow Condensed",sans-serif`;g.fillText('÷'+n,xm,Y(P[Math.floor((i0+i-1)/2)].fo)-12*dpr);g.font=`${10*fz*dpr}px "IBM Plex Mono",monospace`;}
       i0=i;}}
   const c=calc(),x=X(POS.VR1),y=Y(c.fo);g.strokeStyle=fg;g.lineWidth=1.2*dpr;g.beginPath();g.moveTo(x,T);g.lineTo(x,hh-B);g.stroke();
   g.fillStyle=cssv('--yel');g.strokeStyle=fg;g.lineWidth=2*dpr;g.beginPath();g.rect(x-7*dpr,y-7*dpr,14*dpr,14*dpr);g.fill();g.stroke();
-  g.fillStyle=fg;g.textAlign='right';g.font=`800 ${20*dpr}px "Barlow Condensed",sans-serif`;g.fillText(fmtF(c.fo)+' · '+nota(c.fo)+' · ÷'+c.n,w-R-8*dpr,T+12*dpr);}
+  g.fillStyle=fg;g.textAlign='right';g.font=`800 ${20*fz*dpr}px "Barlow Condensed",sans-serif`;g.fillText(fmtF(c.fo)+' · '+nota(c.fo)+' · ÷'+c.n,w-R-8*dpr,T+12*dpr);}
 function bindStair(){const cv=$('#stair');let d=false;const at=e=>{const r=cv.getBoundingClientRect();const L=36/r.width;setPos('VR1',clamp(((e.clientX-r.left)/r.width-L)/(1-L-10/r.width),0,1),'stair');};
   cv.addEventListener('pointerdown',e=>{d=true;cv.setPointerCapture(e.pointerId);at(e);});cv.addEventListener('pointermove',e=>{if(d)at(e);});cv.addEventListener('pointerup',()=>d=false);cv.addEventListener('pointercancel',()=>d=false);}
 
@@ -630,7 +685,7 @@ function drawScope(){const cv=$('#scope'),r=cv.getBoundingClientRect(),dpr=devic
     if(k<3){g.setLineDash([3*dpr,5*dpr]);g.strokeStyle='rgba(255,255,255,.18)';for(const f of [1/3,2/3]){if(k===1)break;const yy=y1-(y1-y0)*f;g.beginPath();g.moveTo(0,yy);g.lineTo(w,yy);g.stroke();}g.setLineDash([]);}
     const draw=(a,b,alpha,lw)=>{g.globalAlpha=alpha;g.strokeStyle=col;g.lineWidth=lw;g.beginPath();for(let i=a;i<b;i++){const x=i/(N-1)*w,y=y1-(y1-y0)*(arr[i]-lo)/(hi-lo);i===a?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();g.globalAlpha=1;};
     if(playing&&!matchMedia('(prefers-reduced-motion: reduce)').matches){draw(0,N,.35,1.6*dpr);draw(Math.max(0,sx-N*.35|0),sx+1,1,2.4*dpr);}else draw(0,N,1,2*dpr);
-    g.fillStyle=col;g.font=`600 ${10*dpr}px "IBM Plex Mono",monospace`;g.textBaseline='top';g.fillText(name,6*dpr,k*lh+5*dpr);});
+    g.fillStyle=col;g.font=`600 ${(innerWidth<=640?12:10)*dpr}px "IBM Plex Mono",monospace`;g.textBaseline='top';g.fillText(name,6*dpr,k*lh+5*dpr);});
   if(playing){const x=sweep*w;g.fillStyle='rgba(240,239,234,.5)';g.fillRect(x-1,0,2*dpr,hh);}
   $('#scinfo').textContent=fmtT(win/10)+' / div';}
 function startAnim(){cancelAnimationFrame(raf);if(!playing){drawScope();return;}
@@ -758,6 +813,7 @@ function buildMain(){const m=$('#main');
       h('span',{class:'empty'},'el NE555 pide 4,5 V como mínimo')),
     h('div',{class:'combos',id:'combos'}),
     h('div',{class:'schwrap',id:'schwrap'}),
+    h('div',{class:'scrollhint'},'← deslizá el esquema para ver todo →'),
     h('div',{class:'partbar',id:'partbar'}),h('div',{class:'ed',id:'ed'}),
     h('p',{class:'note'},'Todas las resistencias, potes, condensadores, la batería y el parlante se pueden cambiar. Escribí el valor como en la placa: 4k7, 10n, 100u, 2M2. Los dos NE555 quedan fijos.'))));
   m.append(h('section',{id:'tocar',class:'panel p-mag'},h('div',{class:'in'},secHead('02','Tocar','PAD XY · X = VR1 · Y = VR2'),
@@ -769,7 +825,7 @@ function buildMain(){const m=$('#main');
     h('canvas',{id:'stair','aria-label':'Gráfico de la frecuencia de salida según la posición de VR1. Arrastrá para mover VR1'}),
     h('p',{class:'note'},'Línea punteada: el reloj de IC1. Línea gruesa: lo que suena. IC2 sólo acepta un disparo cuando terminó su pulso, así que la salida es el reloj dividido por un entero (÷1, ÷2, ÷3…). Cada salto de color es un cambio de división: ése es el sonido "de escalones" de la Atari Punk. Arrastrá sobre el gráfico para mover VR1.'))));
   m.append(h('section',{id:'placa',class:'panel p-ink'},h('div',{class:'in'},secHead('04','La placa','PIEZAS REALES · BANDAS Y CÓDIGOS AL DÍA'),
-    h('div',{class:'boardwrap',id:'boardwrap'}),
+    h('div',{class:'boardwrap',id:'boardwrap'}),h('div',{class:'scrollhint'},'← deslizá la placa para ver todo →'),
     h('p',{class:'note'},'Las bandas de las resistencias, el código de los cerámicos (103 = 10 nF) y la posición de los potes cambian con tus valores. Un condensador de 1 µF o más se dibuja como electrolítico: respetá la polaridad. Rojo/magenta: +V · gris: masa · cian: reloj · amarillo: salida.'))));
   m.append(h('section',{id:'materiales',class:'panel p-paper'},h('div',{class:'in'},secHead('05','Lista de materiales','BOM · '+ORDER.length+' PIEZAS'),
     h('div',{class:'tblw'},h('table',null,h('thead',null,h('tr',null,['Ref','Pieza','Valor','Código','Estado'].map(t=>h('th',null,t)))),h('tbody',{id:'bomb'}))),
