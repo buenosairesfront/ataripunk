@@ -14,7 +14,7 @@ Nothing to install. The interface is in Spanish.
 At the top, four traces: C1 voltage (pin 6 of IC1), IC1 output, C2 voltage (pin 6 of IC2) and the speaker signal. Readouts show clock frequency, pulse length, division ÷n and the output note.
 
 ### 01 · The circuit
-Full schematic. Tap any part to edit it: battery (4.5–15 V), R1, R2, R3, pots VR1 and VR2 (value, shaft position and A/B taper), C1, C2, C3 and the speaker. Use the slider, step through E12/E6 standard values, or type it like on a board: `4k7`, `10n`, `100u`, `2M2`. The two NE555s are locked. Five presets: Classic, Low, Chirp, Many steps, Lo-fi 5 V.
+Full schematic. Tap any part to edit it: battery (4.5–15 V), R1, R2, R3, pots VR1 and VR2 (value, shaft position and A/B taper), C1, C2, C3 and the speaker. Use the slider, step through E12/E6 standard values, or type it like on a board: `4k7`, `10n`, `100u`, `2M2`. The two NE555s are locked. Five presets: Classic, Low, Chirp, Many steps, Lo-fi 5 V. Power switch: 9 V battery or 5 V USB (R3 drops to 100 Ω to keep the level). Save your own combinations by name.
 
 ### 02 · Play
 An XY pad (X = VR1, Y = VR2) whose background is a pixel map of the divisions: each colour is a different ÷n, brightness is pitch. Knobs for VR1, VR2 and volume, and a Gate mode that only sounds while you touch the pad.
@@ -26,7 +26,7 @@ Output frequency against VR1's shaft position. The dashed line is the clock; the
 An illustrative board with real-looking parts: resistor colour bands, ceramic codes (103 = 10 nF) and pot shafts follow your values; caps of 1 µF or more turn into electrolytics.
 
 ### 05 · Bill of materials
-The parts list with current values and codes, ready to copy.
+Export the list as a PNG sheet in the U-MA look: values, codes, readings, the XY pad and the staircase.
 
 ## Under the hood
 

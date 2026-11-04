@@ -14,7 +14,7 @@ No hay nada que instalar.
 Arriba, cuatro trazos: tensión de C1 (pata 6 de IC1), salida de IC1, tensión de C2 (pata 6 de IC2) y la señal en el parlante. Lecturas de frecuencia del reloj, duración del pulso, división ÷n y nota de salida.
 
 ### 01 · El circuito
-El esquema completo. Tocá una pieza para editarla: batería (4,5–15 V), R1, R2, R3, los potes VR1 y VR2 (valor, posición del eje y curva A/B), C1, C2, C3 y el parlante. Con el deslizador, por valores comerciales E12/E6, o escribiéndolo como en la placa: `4k7`, `10n`, `100u`, `2M2`. Los dos NE555 quedan fijos. Cinco recetas: Clásica, Grave, Chirrido, Muchos pasos, Lo-fi 5 V.
+El esquema completo. Tocá una pieza para editarla: batería (4,5–15 V), R1, R2, R3, los potes VR1 y VR2 (valor, posición del eje y curva A/B), C1, C2, C3 y el parlante. Con el deslizador, por valores comerciales E12/E6, o escribiéndolo como en la placa: `4k7`, `10n`, `100u`, `2M2`. Los dos NE555 quedan fijos. Cinco recetas: Clásica, Grave, Chirrido, Muchos pasos, Lo-fi 5 V. Alimentación a elección: batería de 9 V o USB de 5 V (R3 baja a 100 Ω para mantener el volumen). Guardá tus combinaciones con nombre.
 
 ### 02 · Tocar
 Un pad XY (X = VR1, Y = VR2) cuyo fondo es un mapa pixelado de las divisiones: cada color es un ÷n distinto y el brillo es la altura. Perillas de VR1, VR2 y volumen, y modo Gate para que suene sólo mientras tocás.
@@ -26,7 +26,7 @@ La frecuencia de salida según el eje de VR1. La línea punteada es el reloj; la
 Una placa ilustrativa con piezas como las reales: las bandas de las resistencias, los códigos de los cerámicos (103 = 10 nF) y los ejes de los potes siguen tus valores; desde 1 µF el condensador pasa a electrolítico.
 
 ### 05 · Lista de materiales
-Las piezas con sus valores y códigos actuales, lista para copiar.
+Exportá la lista como una hoja PNG con estética U-MA: valores, códigos, lecturas, el pad XY y la escalera.
 
 ## Por dentro
 

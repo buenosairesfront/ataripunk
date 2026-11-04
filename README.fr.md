@@ -14,7 +14,7 @@ Rien à installer. L'interface est en espagnol.
 En haut, quatre traces : tension de C1 (broche 6 d'IC1), sortie d'IC1, tension de C2 (broche 6 d'IC2) et signal du haut-parleur. Affichage de la fréquence d'horloge, de la durée d'impulsion, de la division ÷n et de la note de sortie.
 
 ### 01 · Le circuit
-Le schéma complet. Touchez un composant pour le modifier : pile (4,5–15 V), R1, R2, R3, potentiomètres VR1 et VR2 (valeur, position de l'axe, courbe A/B), C1, C2, C3 et le haut-parleur. Curseur, valeurs normalisées E12/E6 ou saisie comme sur une carte : `4k7`, `10n`, `100u`, `2M2`. Les deux NE555 sont verrouillés. Cinq préréglages.
+Le schéma complet. Touchez un composant pour le modifier : pile (4,5–15 V), R1, R2, R3, potentiomètres VR1 et VR2 (valeur, position de l'axe, courbe A/B), C1, C2, C3 et le haut-parleur. Curseur, valeurs normalisées E12/E6 ou saisie comme sur une carte : `4k7`, `10n`, `100u`, `2M2`. Les deux NE555 sont verrouillés. Cinq préréglages. Alimentation au choix : pile 9 V ou USB 5 V (R3 passe à 100 Ω pour garder le niveau). Enregistrez vos combinaisons avec un nom.
 
 ### 02 · Jouer
 Un pad XY (X = VR1, Y = VR2) dont le fond est une carte pixelisée des divisions : chaque couleur est un ÷n, la luminosité est la hauteur. Boutons VR1, VR2 et volume, et mode Gate.
@@ -26,7 +26,7 @@ La fréquence de sortie selon l'axe de VR1. Pointillé : l'horloge ; trait épai
 Une carte illustrative aux composants réalistes : anneaux de couleur, codes céramiques (103 = 10 nF) et axes des potentiomètres suivent vos valeurs ; dès 1 µF, le condensateur devient électrolytique.
 
 ### 05 · Nomenclature
-La liste des composants avec valeurs et codes, prête à copier.
+Export de la liste en planche PNG au style U-MA : valeurs, codes, mesures, pad XY et escalier.
 
 ## Sous le capot
 

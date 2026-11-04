@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>U-MA Atari Punk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Atari Punk Console con dos NE555: cambiá cada pieza, mirá el osciloscopio y escuchá la salida en vivo. U-MA サウンド">
@@ -129,23 +130,40 @@ input[type=range]{width:100%; accent-color:var(--mag); margin:10px 0 0}
 .pinlist b{font:700 15px var(--disp); margin-right:6px}
 
 /* 02 tocar */
-.playgrid{display:grid; grid-template-columns:minmax(0,1fr) 170px; gap:14px; align-items:start}
+.playgrid{display:grid; grid-template-columns:minmax(0,1fr) 112px; gap:12px; align-items:start}
 @media (max-width:720px){ .playgrid{grid-template-columns:1fr} }
 .padbox{position:relative; border:1.5px solid var(--pf); background:#0B0B0C}
-#pad{display:block; width:100%; aspect-ratio:16/10; touch-action:none; cursor:crosshair}
+#pad{display:block; width:100%; height:clamp(190px,31vh,380px); touch-action:none; cursor:crosshair}
 .padhud{position:absolute; left:10px; top:8px; pointer-events:none; color:#F0EFEA; text-shadow:0 1px 0 #000}
 .padhud b{display:block; font:800 clamp(30px,6vw,52px)/.9 var(--disp)}
 .padhud span{font:600 10.5px var(--mono); letter-spacing:.06em; text-transform:uppercase; opacity:.85}
 .padax{display:flex; justify-content:space-between; font:600 10px var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--pm); margin-top:6px; gap:8px; flex-wrap:wrap}
-.knobs{display:grid; grid-template-columns:1fr; gap:10px}
+.knobs{display:grid; grid-template-columns:1fr; gap:4px}
 @media (max-width:720px){ .knobs{grid-template-columns:repeat(3,1fr)} }
 .knob{display:flex; flex-direction:column; align-items:center; text-align:center}
-.knob svg{width:100%; max-width:120px; touch-action:none; cursor:ns-resize; display:block}
-.knob b{font:800 20px/1 var(--disp); text-transform:uppercase}
-.knob span{font:600 10.5px var(--mono); color:var(--pm); letter-spacing:.04em}
+.knob svg{width:100%; max-width:54px; touch-action:none; cursor:ns-resize; display:block}
+.knob b{font:800 15px/1 var(--disp); text-transform:uppercase; margin-top:2px}
+.knob span{font:600 9.5px var(--mono); color:var(--pm); letter-spacing:.04em}
 
 /* 03 escalera */
-#stair{display:block; width:100%; height:300px; touch-action:none; cursor:ew-resize; border:1.5px solid var(--pf); background:var(--paper)}
+#stair{display:block; width:100%; height:clamp(170px,25vh,300px); touch-action:none; cursor:ew-resize; border:1.5px solid var(--pf); background:var(--paper)}
+
+#gatebtn{min-height:26px; padding:5px 8px; font-size:10.5px}
+.padax{align-items:center}
+#escalera{margin-top:12px}
+#escalera .note{margin-top:6px; max-width:none; font-size:11px; line-height:1.4}
+#tocar>.in .sh,#escalera>.in .sh{margin-bottom:8px; padding-bottom:6px}
+#tocar .num,#escalera .num{font-size:40px}
+
+/* combinaciones */
+.combos{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:10px}
+.combos input{width:150px; border:1.5px solid var(--pf); background:transparent; padding:7px 9px; font:600 12px var(--mono); min-height:34px; color:var(--pf)}
+.chipc{display:inline-flex; border:1.5px solid var(--pf)}
+.chipc button{border:0; background:transparent; color:var(--pf); min-height:31px; padding:6px 9px; font:700 15px/1 var(--disp); text-transform:uppercase}
+.chipc button small{font:500 9.5px var(--mono); color:var(--pm); margin-left:6px; text-transform:none}
+.chipc button.x{border-left:1px solid var(--pl); padding:6px 8px; font:600 12px var(--mono); color:var(--pm)}
+.chipc.on{background:var(--pf)} .chipc.on button{color:var(--pb)} .chipc.on button small{color:inherit; opacity:.7}
+.empty{font:500 11px var(--mono); color:var(--pm)}
 
 /* 04 placa */
 .boardwrap{overflow-x:auto; border:1.5px solid var(--pf)}
@@ -242,7 +260,7 @@ function code(id){const p=PM[id],v=V[id];
   if(p.k==='r'||p.k==='pot'&&false){const b=bands(v);return 'bandas · '+b.n.join(' · ');}
   if(p.k==='pot')return 'cuerpo · '+(v>=1e6?(+(v/1e6).toPrecision(3))+'M':v>=1e3?(+(v/1e3).toPrecision(3))+'K':v)+(TAP[id]==='A'?' logarítmico (A)':' lineal (B)');
   if(p.k==='c')return isElec(v)?'electrolítico · '+fmtV(v,'F')+' · 25 V':'cerámico · código '+capCode(v);
-  if(p.k==='v')return 'pila / fuente · '+fmtV(v,'V');
+  if(p.k==='v')return isUSB()?'conector USB-C o micro-USB · 5 V':'pila / fuente · '+fmtV(v,'V');
   if(p.k==='z')return 'parlante · '+v+' Ω · 0,5 W';
   return '';}
 
@@ -272,10 +290,18 @@ const PRESETS=[
  ['Muchos pasos',{C1:4.7e-9,VR2:1e6,C2:220e-9},{VR1:.5,VR2:.38}],
  ['Lo-fi 5 V',{VCC:5,R3:100,C3:1e-6},{VR1:.5,VR2:.5}],
 ];
-let V={...DEF}, POS={VR1:.42,VR2:.55}, TAP={VR1:'A',VR2:'A'}, VOL=.6, sel='VR1', playing=false, gate=false, padDown=false;
-try{const s=JSON.parse(localStorage.getItem('uma-apc-2')||'null');if(s){Object.assign(V,s.V||{});Object.assign(POS,s.P||{});Object.assign(TAP,s.T||{});if(s.vol!=null)VOL=s.vol;if(s.sel)sel=s.sel;}}catch(e){}
+const SUP={bat:{ref:'B1',name:'Batería',role:PM.VCC.role,fx:PM.VCC.fx},
+ usb:{ref:'J1',name:'Fuente USB 5 V',role:'Entrada USB de 5 V: cargador, computadora o powerbank. El NE555 pide 4,5 V como mínimo, así que a 5 V anda, pero cerca del borde. La salida alta queda en unos 3,3 V. Ojo: algunos powerbank se apagan solos con consumos tan bajos.',fx:'Menos tensión, menos volumen: con USB conviene R3 = 100 Ω. Sumá un electrolítico de 100 µF entre +V y masa, cerca de los 555, para filtrar el ruido del USB.'}};
+const isUSB=(v=V)=>Math.abs(v.VCC-5)<.05;
+function syncSupply(){Object.assign(PM.VCC,isUSB()?SUP.usb:SUP.bat);}
+function supTxt(){return isUSB()?'5 V · USB':fmtV(V.VCC,'V');}
+function setSupply(k){let r3=false;if(k==='usb'){V.VCC=5;if(V.R3===220){V.R3=100;r3=true;}}else{V.VCC=9;if(V.R3===100){V.R3=220;r3=true;}}
+  syncSupply();curName='';renderSch();renderBoard();renderEditor();changed();renderCombos();toast((k==='usb'?'USB 5 V':'Batería 9 V')+(r3?' · R3 a '+fmtV(V.R3,'Ω'):''));}
+let V={...DEF}, POS={VR1:.42,VR2:.55}, TAP={VR1:'A',VR2:'A'}, VOL=.6, sel='VR1', playing=false, gate=false, padDown=false, curName='';
+try{const s=JSON.parse(localStorage.getItem('uma-apc-2')||'null');if(s){Object.assign(V,s.V||{});Object.assign(POS,s.P||{});Object.assign(TAP,s.T||{});if(s.vol!=null)VOL=s.vol;if(s.sel)sel=s.sel;if(s.name)curName=s.name;}}catch(e){}
 for(const id in PM){if(!(V[id]>0))V[id]=DEF[id];V[id]=clamp(V[id],PM[id].min,PM[id].max);}
-let saveT;function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('uma-apc-2',JSON.stringify({V,P:POS,T:TAP,vol:VOL,sel}));}catch(e){}},300);}
+syncSupply();
+let saveT;function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('uma-apc-2',JSON.stringify({V,P:POS,T:TAP,vol:VOL,sel,name:curName}));}catch(e){}},300);}
 
 /* ===================== modelo ===================== */
 const taper=(id,p)=>TAP[id]==='A'?(Math.pow(10,2*p)-1)/99:p;
@@ -339,7 +365,7 @@ async function togglePlay(){playing=!playing;if(playing){try{await startAudio();
 
 /* ===================== cabecera ===================== */
 function renderBar(){const b=$('#bar');b.innerHTML='';
-  b.append(logoSVG(),h('div',{class:'title'},h('b',null,'Atari Punk · Consola de pasos'),h('small',null,h('span',null,'2 × NE555'),h('span',{id:'hdv'},fmtV(V.VCC,'V')),h('span',null,'astable → monoestable'))),
+  b.append(logoSVG(),h('div',{class:'title'},h('b',null,'Atari Punk · Consola de pasos'),h('small',null,h('span',null,'2 × NE555'),h('span',{id:'hdv'},supTxt()),h('span',null,'astable → monoestable'))),
     h('button',{class:'play',id:'playbtn','aria-pressed':'false',onclick:togglePlay},h('i'),h('span',null,'Sonido')));}
 
 /* ===================== 01 · esquema ===================== */
@@ -410,7 +436,7 @@ function miniSVG(id){
   if(p.k==='r')return `<svg viewBox="0 0 300 96"><line x1="20" x2="280" y1="48" y2="48" stroke="#B8B9B5" stroke-width="4"/>${resBody(150,48,true,v,2.2)}</svg>`;
   if(p.k==='pot')return `<svg viewBox="0 0 300 96">${potBody(150,48,POS[id],v,1.15,true)}</svg>`;
   if(p.k==='c')return `<svg viewBox="0 0 300 96">${capBody(150,48,v,true,1.6)}</svg>`;
-  if(p.k==='v')return `<svg viewBox="0 0 300 96">${batBody(116,10,v,.62)}</svg>`;
+  if(p.k==='v')return `<svg viewBox="0 0 300 96">${isUSB()?usbBody(128,6,.56):batBody(116,10,v,.62)}</svg>`;
   if(p.k==='z')return `<svg viewBox="0 0 300 96">${spkBody(150,48,v,1.05)}</svg>`;}
 function seriesOf(id){const p=PM[id];return p.list||seriesList(p.ser,p.min,p.max);}
 function stepVal(id,dir){const L=seriesOf(id),v=V[id];let nv=v;
@@ -484,7 +510,7 @@ function padMap(){const key=JSON.stringify(V);if(key===padKey&&padImg)return pad
     im.data[i*4]=edge?16:col[0]*k;im.data[i*4+1]=edge?16:col[1]*k;im.data[i*4+2]=edge?16:col[2]*k;im.data[i*4+3]=255;}
   g.putImageData(im,0,0);padImg=cv;return cv;}
 function drawPad(){const cv=$('#pad');if(!cv)return;const r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;
-  if(cv.width!==Math.round(r.width*dpr)){cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
+  if(cv.width!==Math.round(r.width*dpr)||cv.height!==Math.round(r.height*dpr)){cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
   const g=cv.getContext('2d'),w=cv.width,hh=cv.height;g.imageSmoothingEnabled=false;g.drawImage(padMap(),0,0,w,hh);
   g.strokeStyle='rgba(255,255,255,.08)';g.lineWidth=1;for(let i=1;i<10;i++){g.beginPath();g.moveTo(w*i/10,0);g.lineTo(w*i/10,hh);g.stroke();g.beginPath();g.moveTo(0,hh*i/10);g.lineTo(w,hh*i/10);g.stroke();}
   const now=performance.now();trail=trail.filter(t=>now-t.t<900);
@@ -533,6 +559,7 @@ function potBody(cx,cy,p,v,s=1,lugs){const a=-135+270*p;let o=`<g transform="tra
   o+=`<circle r="30" fill="#3A3B3E" stroke="#101010" stroke-width="1.5"/><circle r="19" fill="#E1C43B" stroke="#101010" stroke-width="1.5"/><g transform="rotate(${a})"><rect x="-2" y="-19" width="4" height="13" fill="#101010"/></g>`;
   o+=`<text x="-30" y="-33" font-size="8" fill="#ECEBE6" font-weight="700">${v>=1e6?(+(v/1e6).toPrecision(3))+'M':(+(v/1e3).toPrecision(3))+'K'}</text></g>`;return o;}
 function batBody(x,y,v,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="6" y="0" width="16" height="12" fill="#B8B9B5" stroke="#101010"/><rect x="40" y="0" width="16" height="12" fill="#B8B9B5" stroke="#101010"/><rect x="0" y="10" width="64" height="118" rx="4" fill="#E1C43B" stroke="#101010" stroke-width="1.5"/><rect x="0" y="74" width="64" height="54" fill="#101010"/><text x="32" y="56" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="30" fill="#101010">${fmtV(v,'V').replace(' ','')}</text><text x="32" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#E1C43B">+ −</text></g>`;}
+function usbBody(x,y,s=1){return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="0" width="64" height="112" rx="3" fill="#1E5A3C" stroke="#101010" stroke-width="1.5"/><circle cx="16" cy="6" r="4" fill="#C9A54A" stroke="#101010"/><circle cx="50" cy="6" r="4" fill="#C9A54A" stroke="#101010"/><text x="16" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#ECEBE6">+</text><text x="50" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#ECEBE6">−</text><text x="32" y="60" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="30" fill="#ECEBE6">5V</text><text x="32" y="78" text-anchor="middle" font-size="10" font-weight="700" fill="#9FD3B5">USB</text><rect x="12" y="96" width="40" height="26" rx="8" fill="#B8B9B5" stroke="#101010" stroke-width="1.5"/><rect x="20" y="106" width="24" height="6" rx="3" fill="#2A2B2E"/><path d="M32 123V150" stroke="#2A2B2E" stroke-width="8" stroke-linecap="round"/></g>`;}
 function spkBody(cx,cy,v,s=1){return `<g transform="translate(${cx} ${cy}) scale(${s})"><circle r="40" fill="#2A2B2E" stroke="#101010" stroke-width="1.5"/><circle r="31" fill="none" stroke="#4A4B4E" stroke-width="2"/><circle r="21" fill="#18191B" stroke="#4A4B4E"/><circle r="9" fill="#D12F7D"/><text y="34" text-anchor="middle" font-size="9" font-weight="700" fill="#ECEBE6">${v} Ω</text></g>`;}
 function boardChip(x0,y0,id,alone){let o=alone?`<svg viewBox="-20 -18 120 132">`:'';
   for(let k=0;k<4;k++){o+=`<rect x="${x0+7+20*k}" y="${y0-8}" width="6" height="9" fill="#B8B9B5"/><rect x="${x0+7+20*k}" y="${y0+95}" width="6" height="9" fill="#B8B9B5"/>`;}
@@ -551,7 +578,7 @@ function renderBoard(){const box=$('#boardwrap');let s='';
   s+=`<rect x="6" y="6" width="888" height="348" rx="8" fill="#161719" stroke="#3A3B3E"/><rect x="6" y="6" width="888" height="348" rx="8" fill="url(#holes)"/>`;
   s+=BW('M24 40H876','vp')+BW('M24 330H876','gnd')+BL(882,44,'+','end','#D12F7D',13)+BL(882,325,'−','end','#8D8E8A',13);
   // batería
-  s+=`<g class="bp" data-id="VCC"><rect class="bhl" x="22" y="92" width="80" height="160"/>`+BW('M46 104V40','vp')+BW('M80 104V98H112V330','gnd')+batBody(30,98,V.VCC,1)+`</g>`+BD(46,40)+BD(112,330);
+  s+=`<g class="bp" data-id="VCC"><rect class="bhl" x="22" y="92" width="80" height="160"/>`+BW('M46 104V40','vp')+BW('M80 104V98H112V330','gnd')+(isUSB()?usbBody(30,98,1):batBody(30,98,V.VCC,1))+`</g>`+BD(46,40)+BD(112,330);
   // IC1
   s+=`<g class="bp" data-id="R1"><rect class="bhl" x="278" y="48" width="64" height="66"/>`+leg(290,40,290,124)+resBody(290,82,false,V.R1)+BL(300,64,'R1','start')+BL(300,78,fmtV(V.R1,'Ω'),'start','#9C9B97',9)+`</g>`+BD(290,40);
   s+=BW('M209 176H228V108H290','j')+BD(290,108);
@@ -586,7 +613,6 @@ function renderBOM(){const tb=$('#bomb');tb.innerHTML='';
     const p=PM[id],v=V[id];let cd=code(id);let bd=null;
     if(p.k==='r'){const b=bands(v);bd=h('span',{class:'bands'},b.c.map(c=>h('i',{style:'background:'+c})));cd=b.n.join(' · ');}
     tb.append(h('tr',{onclick:()=>{select(id);$('#circuito').scrollIntoView({behavior:'smooth'});}},h('td',{class:'r'},p.ref),h('td',null,p.name),h('td',{class:'v'},fmtV(v,p.u)),h('td',null,bd,cd),h('td',null,v===DEF[id]?'original':'cambiado')));}}
-function bomText(){return ORDER.map(id=>IC[id]?`${id}\tNE555\tTimer 555`:`${PM[id].ref}\t${fmtV(V[id],PM[id].u)}\t${PM[id].name}${PM[id].k==='pot'?' (lineal)':''}`).join('\n')+'\nJack o bornera de salida, cables, placa';}
 
 /* ===================== osciloscopio ===================== */
 let sweep=0,raf=0,last=0;
@@ -614,24 +640,131 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnima
 /* ===================== cambios ===================== */
 let frameQ=false,qOpts={};
 function changed(keepSlider,from){sendAudio();qOpts.keep=qOpts.keep||keepSlider;qOpts.from=from;if(frameQ)return;frameQ=true;requestAnimationFrame(()=>{frameQ=false;const o=qOpts;qOpts={};
+  const k=isUSB();if(k!==changed.k){const first=changed.k==null;changed.k=k;syncSupply();
+    if(!first){renderSch();renderBoard.k='';renderPartbar();if(sel==='VCC'){if(!o.keep)renderEditor();else{const n=$('.edname');if(n)n.textContent=PM.VCC.name;}}}}
+  document.querySelectorAll('[data-sup]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sup==='usb'?k:V.VCC===9)));
   const c=calc();$('#ro-fa').textContent=fmtF(c.fa);$('#ro-tm').textContent=fmtT(c.Tm);$('#ro-n').innerHTML='<em>÷'+c.n+'</em>';$('#ro-fo').textContent=fmtF(c.fo)+' · '+nota(c.fo);
-  $('#hdv').textContent=fmtV(V.VCC,'V');
+  $('#hdv').textContent=supTxt();
   updSch();updEditorLive(o.keep);updKnobs();if(!playing)drawScope();drawPad();drawStair();
   const bkey=JSON.stringify([V,POS.VR1.toFixed(2),POS.VR2.toFixed(2)]);if(bkey!==renderBoard.k){renderBoard.k=bkey;renderBoard();}
   renderBOM();save();});}
 
+/* ===================== combinaciones guardadas ===================== */
+const SKEY='uma-apc-saved';
+let COMBOS=(()=>{try{const a=JSON.parse(localStorage.getItem(SKEY)||'[]');return Array.isArray(a)?a.filter(c=>c&&c.n&&c.V):[];}catch(e){return [];}})();
+function storeCombos(){try{localStorage.setItem(SKEY,JSON.stringify(COMBOS));}catch(e){toast('Este navegador no deja guardar');}}
+function refreshAll(){padKey='';syncSupply();renderSch();renderBoard();renderEditor();changed();renderCombos();}
+function renderCombos(){const b=$('#combos');if(!b)return;b.innerHTML='';
+  const inp=h('input',{type:'text',id:'cmbname',maxlength:'28',placeholder:'Nombre',value:curName,'aria-label':'Nombre de la combinación',onkeydown:e=>{if(e.key==='Enter')saveCombo(inp.value);}});
+  b.append(h('span',{class:'lbl',style:'margin:0 6px 0 0'},'Mis combinaciones'),inp,h('button',{class:'btn acc',onclick:()=>saveCombo(inp.value)},'Guardar'));
+  if(!COMBOS.length)b.append(h('span',{class:'empty'},'todavía no guardaste ninguna'));
+  COMBOS.forEach((c,i)=>{const x=h('button',{class:'x','aria-label':'Borrar '+c.n,onclick:e=>{const t=e.currentTarget;
+      if(t.dataset.arm){COMBOS.splice(i,1);storeCombos();if(curName===c.n)curName='';renderCombos();save();toast('Borrada: '+c.n);return;}
+      t.dataset.arm='1';t.textContent='¿borrar?';setTimeout(()=>{if(t.isConnected){delete t.dataset.arm;t.textContent='×';}},2500);}},'×');
+    b.append(h('span',{class:'chipc'+(c.n===curName?' on':'')},h('button',{onclick:()=>loadCombo(i),title:'Cargar '+c.n},c.n,h('small',null,isUSB(c.V)?'USB':fmtV(c.V.VCC,'V'))),x));});}
+function saveCombo(name){name=String(name||'').trim().slice(0,28);if(!name){toast('Poné un nombre');$('#cmbname')?.focus();return;}
+  const rec={n:name,V:{...V},P:{...POS},T:{...TAP},d:Date.now()};const i=COMBOS.findIndex(c=>c.n.toLowerCase()===name.toLowerCase());
+  if(i>=0)COMBOS[i]=rec;else{COMBOS.unshift(rec);if(COMBOS.length>30)COMBOS.length=30;}
+  storeCombos();curName=name;renderCombos();save();toast((i>=0?'Actualizada: ':'Guardada: ')+name);}
+function loadCombo(i){const c=COMBOS[i];if(!c)return;V={...DEF,...c.V};for(const id in PM)V[id]=clamp(V[id]>0?V[id]:DEF[id],PM[id].min,PM[id].max);
+  Object.assign(POS,c.P||{});Object.assign(TAP,c.T||{});curName=c.n;refreshAll();toast('Cargada: '+c.n);}
+
+/* ===================== exportar PNG ===================== */
+function drawLogo(g,x,y,s){g.save();g.translate(x,y);g.scale(s,s);g.lineJoin='round';
+  const poly=(pts,fill)=>{g.beginPath();pts.forEach(([a,b],i)=>i?g.lineTo(a,b):g.moveTo(a,b));g.closePath();g.fillStyle=fill;g.fill();g.strokeStyle='#161616';g.lineWidth=3;g.stroke();};
+  let gr=g.createLinearGradient(14,0,36,0);gr.addColorStop(0,'#7d7e7b');gr.addColorStop(.55,'#b9bab7');gr.addColorStop(1,'#9a9b98');poly([[36,6],[14,28],[14,206],[36,184]],gr);
+  gr=g.createLinearGradient(0,184,0,206);gr.addColorStop(0,'#c9cac7');gr.addColorStop(1,'#8e8f8c');poly([[36,184],[14,206],[300,206],[322,184]],gr);
+  g.fillStyle='#161616';g.fillRect(36,6,286,178);g.fillStyle='#EAEAE7';g.fillRect(45,14,268,114);
+  g.fillStyle='#161616';g.font='800 116px "Barlow Condensed",sans-serif';g.textAlign='center';g.textBaseline='alphabetic';
+  const tw=g.measureText('U-MA').width;g.save();g.translate(179,113);g.scale(248/tw,1);g.fillText('U-MA',0,0);g.restore();
+  for(const [c,xx] of [['#D12F7D',45],['#2A9EBF',85],['#E1C43B',125]]){g.fillStyle=c;g.fillRect(xx,136,36,40);g.strokeStyle='#161616';g.lineWidth=2;g.strokeRect(xx,136,36,40);}
+  g.fillStyle='#EAEAE7';g.fillRect(166,136,147,40);g.fillStyle='#161616';g.strokeStyle='#161616';g.lineWidth=1.2;
+  g.font='900 27px "Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif';if('letterSpacing' in g)g.letterSpacing='2px';
+  g.strokeText('サウンド',239.5,165);g.fillText('サウンド',239.5,165);if('letterSpacing' in g)g.letterSpacing='0px';g.restore();}
+function stairOn(g,x0,y0,w,hh,C){const N=300,P=[];let lo=1e9,hi=0;for(let i=0;i<=N;i++){const c=calc(V,i/N,POS.VR2);P.push(c);lo=Math.min(lo,c.fo);hi=Math.max(hi,c.fo);}
+  lo/=1.25;hi*=3;const L=x0+40,R=x0+w-12,T=y0+40,B=y0+hh-26;const X=p=>L+(R-L)*p,Y=f=>T+(B-T)*(1-Math.log(f/lo)/Math.log(hi/lo));
+  g.font='10px '+C.MO;g.textBaseline='middle';g.lineWidth=1;
+  for(let d=0;d<6;d++)for(const m of [1,2,5]){const f=m*Math.pow(10,d);if(f<lo||f>hi)continue;const y=Y(f);g.strokeStyle=C.LINE;g.beginPath();g.moveTo(L,y);g.lineTo(R,y);g.stroke();g.fillStyle=C.MUTE;g.textAlign='right';g.fillText(f>=1000?f/1000+'k':f,L-5,y);}
+  g.textAlign='center';for(let i=0;i<=10;i+=2){const x=X(i/10);g.fillStyle=C.MUTE;g.fillText(i*10+'%',x,B+13);}
+  g.save();g.beginPath();g.rect(L,T-4,R-L,B-T+8);g.clip();
+  g.setLineDash([4,4]);g.strokeStyle=C.CYA;g.lineWidth=1.5;g.beginPath();let st=false;for(let i=0;i<=N;i++){const f=P[i].fa;if(f>hi){st=false;continue;}const x=X(i/N),y=Y(f);st?g.lineTo(x,y):g.moveTo(x,y);st=true;}g.stroke();g.setLineDash([]);
+  let i0=0;for(let i=1;i<=N+1;i++){if(i===N+1||P[i].n!==P[i0].n){const n=P[i0].n;g.strokeStyle=n%2?C.MAG:C.INK;g.lineWidth=3;g.beginPath();for(let j=i0;j<i;j++){const x=X(j/N),y=Y(P[j].fo);j===i0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+      if(X((i-1)/N)-X(i0/N)>22){g.fillStyle=n%2?C.MAG:C.INK;g.font='700 12px '+C.BC;g.fillText('÷'+n,X((i0+i-1)/2/N),Y(P[Math.floor((i0+i-1)/2)].fo)-12);}i0=i;}}
+  g.restore();const c=calc(),x=X(POS.VR1),y=Y(c.fo);g.strokeStyle=C.INK;g.lineWidth=1.2;g.beginPath();g.moveTo(x,T);g.lineTo(x,B);g.stroke();
+  g.fillStyle=C.YEL;g.lineWidth=2;g.beginPath();g.rect(x-7,y-7,14,14);g.fill();g.stroke();}
+async function exportPNG(){
+  try{await Promise.all([document.fonts.load('800 40px "Barlow Condensed"'),document.fonts.load('700 20px "Barlow Condensed"'),document.fonts.load('500 12px "IBM Plex Mono"'),document.fonts.load('600 12px "IBM Plex Mono"'),document.fonts.load('700 12px "IBM Plex Mono"'),document.fonts.load('900 27px "Noto Sans JP"','サウンド')]);}catch(e){}
+  const C={PAPER:'#F0EFEA',INK:'#141414',MUTE:'#5E5E5A',LINE:'rgba(20,20,20,.2)',MAG:'#D12F7D',CYA:'#2A9EBF',YEL:'#E1C43B',BC:'"Barlow Condensed",sans-serif',MO:'"IBM Plex Mono",monospace'};
+  const W=1200,H=1300,S=2,M=28,x0=58,x1=W-58,IW=x1-x0;const cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;const g=cv.getContext('2d');g.scale(S,S);
+  const c=calc(),usb=isUSB(),now=new Date();
+  const txt=(t,x,y,font,col,al='left',bl='alphabetic')=>{g.font=font;g.fillStyle=col;g.textAlign=al;g.textBaseline=bl;g.fillText(t,x,y);};
+  const box=(x,y,w,hh,fill,stroke=C.INK,lw=1.5)=>{if(fill){g.fillStyle=fill;g.fillRect(x,y,w,hh);}g.strokeStyle=stroke;g.lineWidth=lw;g.strokeRect(x,y,w,hh);};
+  // fondo y panel
+  g.fillStyle='#C8C9C5';g.fillRect(0,0,W,H);box(M,M,W-2*M,H-2*M,C.PAPER);g.strokeStyle=C.LINE;g.lineWidth=1;g.strokeRect(M+6,M+6,W-2*M-12,H-2*M-12);
+  txt('LISTA DE MATERIALES · BOM · '+ORDER.length+' PIEZAS',x0,62,'500 11px '+C.MO,C.MUTE);txt('U-MA サウンド',x1,62,'500 11px '+C.MO,C.MUTE,'right');
+  // cabecera
+  drawLogo(g,x0-4,78,.52);
+  txt('ATARI PUNK',x0+186,146,'800 78px '+C.BC,C.INK);
+  txt('CONSOLA DE PASOS · 2 × NE555 · ASTABLE → MONOESTABLE',x0+188,174,'600 13px '+C.MO,C.MUTE);
+  [C.MAG,C.CYA,C.YEL].forEach((col,i)=>box(x1-3*16+i*16+2,84,12,12,col,C.INK,1));
+  txt(curName?curName.toUpperCase():'SIN NOMBRE',x1,140,'700 30px '+C.BC,curName?C.MAG:C.MUTE,'right');
+  txt(now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'})+' · '+(usb?'USB 5 V':'Batería '+fmtV(V.VCC,'V')),x1,166,'500 12px '+C.MO,C.MUTE,'right');
+  g.fillStyle=C.INK;g.fillRect(x0,196,IW,2);
+  // lecturas
+  let y=214;box(x0,y,IW,92,C.MAG);const cells=[['Alimentación',usb?'5 V · USB':fmtV(V.VCC,'V')],['Reloj · IC1',fmtF(c.fa)],['Pulso · IC2',fmtT(c.Tm)],['División','÷'+c.n],['Salida',fmtF(c.fo)+' · '+nota(c.fo)]];
+  const cw=[190,200,200,160,IW-750];let cx=x0;cells.forEach(([k,v],i)=>{if(i){g.fillStyle='rgba(0,0,0,.32)';g.fillRect(cx,y+12,1,68);}txt(k.toUpperCase(),cx+16,y+30,'500 10.5px '+C.MO,'rgba(0,0,0,.68)');txt(v,cx+16,y+70,'700 32px '+C.BC,'#101010');cx+=cw[i];});
+  // pad + escalera
+  y=326;const PW=380,PH=240;box(x0,y,PW,PH,'#0B0B0C');g.imageSmoothingEnabled=false;g.drawImage(padMap(),x0+1,y+1,PW-2,PH-2);g.imageSmoothingEnabled=true;
+  const mx=x0+1+POS.VR1*(PW-2),my=y+1+(1-POS.VR2)*(PH-2);g.strokeStyle='#F0EFEA';g.lineWidth=1.5;g.beginPath();g.moveTo(mx,y+1);g.lineTo(mx,y+PH-1);g.moveTo(x0+1,my);g.lineTo(x0+PW-1,my);g.stroke();
+  g.fillStyle=C.MAG;g.strokeStyle='#101010';g.lineWidth=3;g.beginPath();g.rect(mx-8,my-8,16,16);g.fill();g.stroke();
+  g.fillStyle='rgba(11,11,12,.72)';g.fillRect(x0+1,y+1,200,26);txt('02 · PAD XY · VR1 × VR2',x0+10,y+18,'600 11px '+C.MO,'#F0EFEA');
+  const SX=x0+PW+20,SW=IW-PW-20;box(SX,y,SW,PH,'#FFFFFF');txt('03 · LA ESCALERA · VR2 '+Math.round(POS.VR2*100)+'%',SX+12,y+20,'600 11px '+C.MO,C.MUTE);
+  txt(fmtF(c.fo)+' · ÷'+c.n,SX+SW-12,y+24,'800 20px '+C.BC,C.INK,'right');stairOn(g,SX,y,SW,PH,C);
+  // tabla
+  y=590;const col=[0,92,470,640,1000];const RH=44;
+  ['Ref','Pieza','Valor','Código','Estado'].forEach((t,i)=>txt(t.toUpperCase(),x0+col[i]+10,y+18,'600 10.5px '+C.MO,C.MUTE));
+  g.fillStyle=C.INK;g.fillRect(x0,y+28,IW,1.5);y+=30;
+  for(const id of ORDER){const ic=!!IC[id];
+    if(ic){g.save();g.beginPath();g.rect(x0,y,IW,RH);g.clip();g.strokeStyle=C.LINE;g.lineWidth=1;for(let k=-RH;k<IW;k+=9){g.beginPath();g.moveTo(x0+k,y+RH);g.lineTo(x0+k+RH,y);g.stroke();}g.restore();}
+    const mid=y+RH/2+1,p=PM[id],v=V[id],chg=!ic&&v!==DEF[id];
+    txt(ic?id:p.ref,x0+col[0]+10,mid+8,'800 24px '+C.BC,C.INK);
+    txt(ic?'Timer 555 · '+IC[id].name:p.name,x0+col[1]+10,mid+5,'500 14px '+C.MO,ic?C.MUTE:C.INK);
+    txt(ic?'NE555':fmtV(v,p.u),x0+col[2]+10,mid+8,'700 23px '+C.BC,C.INK);
+    let tx=x0+col[3]+10;
+    if(!ic&&p.k==='r'){const b=bands(v);b.c.forEach(cc=>{box(tx,mid-10,9,20,cc,C.INK,1);tx+=11;});tx+=6;txt(b.n.join(' · '),tx,mid+4,'500 11.5px '+C.MO,C.MUTE);}
+    else txt(ic?'DIP-8':code(id),tx,mid+4,'500 11.5px '+C.MO,C.MUTE);
+    if(ic)txt('FIJO',x0+col[4]+10,mid+4,'700 11px '+C.MO,C.INK);
+    else{txt(chg?'CAMBIADO':'ORIGINAL',x0+col[4]+10,mid+4,'700 11px '+C.MO,chg?C.MAG:C.MUTE);}
+    y+=RH;g.fillStyle=C.LINE;g.fillRect(x0,y,IW,1);}
+  g.strokeStyle=C.INK;g.lineWidth=1.5;g.strokeRect(x0,590+28,IW,y-590-28);
+  y+=24;txt('Ejes al exportar: VR1 '+Math.round(POS.VR1*100)+'% curva '+TAP.VR1+' · VR2 '+Math.round(POS.VR2*100)+'% curva '+TAP.VR2+' · más: jack o bornera de salida, cables, placa'+(usb?' · 100 µF entre +V y masa':''),x0,y,'500 11.5px '+C.MO,C.MUTE);
+  // franja de peligro
+  y+=18;g.save();g.beginPath();g.rect(x0,y,IW,14);g.clip();g.fillStyle=C.INK;for(let k=-14;k<IW;k+=12){g.beginPath();g.moveTo(x0+k,y+14);g.lineTo(x0+k+6,y+14);g.lineTo(x0+k+20,y);g.lineTo(x0+k+14,y);g.closePath();g.fill();}g.restore();box(x0,y,IW,14,null);
+  y+=38;txt('U-MA サウンド · ATARI PUNK · CONSOLA DE PASOS',x0,y,'600 11px '+C.MO,C.INK);
+  txt('BUENOSAIRESFRONT.GITHUB.IO/ATARIPUNK',x1,y,'600 11px '+C.MO,C.INK,'right');
+  txt('Diseño original de Forrest M. Mims III (Stepped Tone Generator) · valores calculados con la simulación de la app',x0,y+18,'500 10.5px '+C.MO,C.MUTE);
+  const slug=(curName||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const fname='uma-atari-punk'+(slug?'-'+slug:'')+'.png';
+  cv.toBlob(b=>{if(!b){toast('No se pudo exportar');return;}const a=h('a',{href:URL.createObjectURL(b),download:fname});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);toast('Exportada: '+fname);},'image/png');
+  exportPNG.last=cv;}
+
 /* ===================== armado ===================== */
 function buildMain(){const m=$('#main');
   m.append(h('section',{id:'circuito',class:'panel p-paper'},h('div',{class:'in'},secHead('01','El circuito','ESQUEMA · TOCÁ UNA PIEZA PARA CAMBIARLA'),
-    h('div',{class:'row',style:'margin-bottom:10px'},h('span',{class:'lbl',style:'margin:0 6px 0 0'},'Recetas'),PRESETS.map(([n,vals,ps])=>h('button',{class:'btn',onclick:()=>{V={...DEF,...vals};Object.assign(POS,ps);renderSch();renderBoard();renderEditor();changed();toast('Receta: '+n);}},n)),h('button',{class:'btn',onclick:()=>{V={...DEF};renderSch();renderBoard();renderEditor();changed();toast('Valores originales');}},'Restaurar')),
+    h('div',{class:'row',style:'margin-bottom:10px'},h('span',{class:'lbl',style:'margin:0 6px 0 0'},'Recetas'),PRESETS.map(([n,vals,ps])=>h('button',{class:'btn',onclick:()=>{V={...DEF,...vals};Object.assign(POS,ps);curName='';refreshAll();toast('Receta: '+n);}},n)),h('button',{class:'btn',onclick:()=>{V={...DEF};curName='';refreshAll();toast('Valores originales');}},'Restaurar')),
+    h('div',{class:'row',style:'margin-bottom:10px'},h('span',{class:'lbl',style:'margin:0 6px 0 0'},'Alimentación'),
+      h('button',{class:'btn','data-sup':'bat','aria-pressed':'false',onclick:()=>setSupply('bat')},'9 V · batería'),
+      h('button',{class:'btn','data-sup':'usb','aria-pressed':'false',onclick:()=>setSupply('usb')},'5 V · USB'),
+      h('span',{class:'empty'},'el NE555 pide 4,5 V como mínimo')),
+    h('div',{class:'combos',id:'combos'}),
     h('div',{class:'schwrap',id:'schwrap'}),
     h('div',{class:'partbar',id:'partbar'}),h('div',{class:'ed',id:'ed'}),
     h('p',{class:'note'},'Todas las resistencias, potes, condensadores, la batería y el parlante se pueden cambiar. Escribí el valor como en la placa: 4k7, 10n, 100u, 2M2. Los dos NE555 quedan fijos.'))));
   m.append(h('section',{id:'tocar',class:'panel p-mag'},h('div',{class:'in'},secHead('02','Tocar','PAD XY · X = VR1 · Y = VR2'),
     h('div',{class:'playgrid'},h('div',null,h('div',{class:'padbox'},h('canvas',{id:'pad','aria-label':'Pad: horizontal mueve VR1, vertical mueve VR2. Cada color es una división distinta'}),h('div',{class:'padhud'},h('b',{id:'padn'},'—'),h('span',{id:'padi'},'—'))),
-        h('div',{class:'padax'},h('span',null,'← VR1 · reloj →'),h('span',null,'↕ VR2 · pulso'),h('span',null,'cada color = una división ÷n · brillo = altura'))),
-      h('div',null,h('div',{class:'knobs',id:'knobs'}),h('div',{class:'row',style:'margin-top:10px;justify-content:center'},
-        h('button',{class:'btn',id:'gatebtn','aria-pressed':'false',onclick:e=>{gate=!gate;e.currentTarget.setAttribute('aria-pressed',gate);e.currentTarget.textContent=gate?'Gate: sólo al tocar':'Gate: libre';sendAudio();}},'Gate: libre')))))));
+        h('div',{class:'padax'},h('span',null,'← VR1 · reloj →'),h('span',null,'↕ VR2 · pulso'),h('span',null,'cada color = una división ÷n · brillo = altura'),
+        h('button',{class:'btn',id:'gatebtn','aria-pressed':'false',onclick:e=>{gate=!gate;e.currentTarget.setAttribute('aria-pressed',gate);e.currentTarget.textContent=gate?'Gate: al tocar':'Gate: libre';sendAudio();}},'Gate: libre'))),
+      h('div',null,h('div',{class:'knobs',id:'knobs'}))))));
   m.append(h('section',{id:'escalera',class:'panel p-paper'},h('div',{class:'in'},secHead('03','La escalera','FRECUENCIA DE SALIDA SEGÚN EL EJE DE VR1 · VR2 FIJO'),
     h('canvas',{id:'stair','aria-label':'Gráfico de la frecuencia de salida según la posición de VR1. Arrastrá para mover VR1'}),
     h('p',{class:'note'},'Línea punteada: el reloj de IC1. Línea gruesa: lo que suena. IC2 sólo acepta un disparo cuando terminó su pulso, así que la salida es el reloj dividido por un entero (÷1, ÷2, ÷3…). Cada salto de color es un cambio de división: ése es el sonido "de escalones" de la Atari Punk. Arrastrá sobre el gráfico para mover VR1.'))));
@@ -640,10 +773,10 @@ function buildMain(){const m=$('#main');
     h('p',{class:'note'},'Las bandas de las resistencias, el código de los cerámicos (103 = 10 nF) y la posición de los potes cambian con tus valores. Un condensador de 1 µF o más se dibuja como electrolítico: respetá la polaridad. Rojo/magenta: +V · gris: masa · cian: reloj · amarillo: salida.'))));
   m.append(h('section',{id:'materiales',class:'panel p-paper'},h('div',{class:'in'},secHead('05','Lista de materiales','BOM · '+ORDER.length+' PIEZAS'),
     h('div',{class:'tblw'},h('table',null,h('thead',null,h('tr',null,['Ref','Pieza','Valor','Código','Estado'].map(t=>h('th',null,t)))),h('tbody',{id:'bomb'}))),
-    h('div',{class:'row',style:'margin-top:10px'},h('button',{class:'btn acc',onclick:()=>{const t=bomText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Lista copiada')).catch(()=>{toast('No se pudo copiar');});}},'Copiar lista')),
+    h('div',{class:'row',style:'margin-top:10px'},h('button',{class:'btn acc',onclick:exportPNG},'Exportar lista'),h('span',{class:'empty'},'PNG con la lista, los valores y la escalera')),
     h('div',{class:'hz'}))));}
 
-renderBar();buildMain();renderSch();renderBoard();renderEditor();renderKnobs();bindPad();bindStair();changed();
+renderBar();buildMain();renderSch();renderBoard();renderEditor();renderKnobs();bindPad();bindStair();renderCombos();changed();
 addEventListener('resize',()=>{drawScope();drawPad();drawStair();});
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>drawStair());
 </script>

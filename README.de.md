@@ -14,7 +14,7 @@ Keine Installation nötig. Die Oberfläche ist auf Spanisch.
 Oben vier Spuren: Spannung an C1 (Pin 6 von IC1), Ausgang IC1, Spannung an C2 (Pin 6 von IC2) und das Lautsprechersignal. Anzeigen für Taktfrequenz, Impulsdauer, Teilung ÷n und Ausgangston.
 
 ### 01 · Die Schaltung
-Der komplette Schaltplan. Tippe ein Bauteil an, um es zu ändern: Batterie (4,5–15 V), R1, R2, R3, Potis VR1 und VR2 (Wert, Stellung, Kennlinie A/B), C1, C2, C3 und Lautsprecher. Per Schieberegler, E12/E6-Normwerten oder Eingabe wie auf der Platine: `4k7`, `10n`, `100u`, `2M2`. Die beiden NE555 sind gesperrt. Fünf Presets.
+Der komplette Schaltplan. Tippe ein Bauteil an, um es zu ändern: Batterie (4,5–15 V), R1, R2, R3, Potis VR1 und VR2 (Wert, Stellung, Kennlinie A/B), C1, C2, C3 und Lautsprecher. Per Schieberegler, E12/E6-Normwerten oder Eingabe wie auf der Platine: `4k7`, `10n`, `100u`, `2M2`. Die beiden NE555 sind gesperrt. Fünf Presets. Versorgung wählbar: 9-V-Batterie oder 5 V über USB (R3 sinkt auf 100 Ω, damit die Lautstärke bleibt). Eigene Kombinationen mit Namen speichern.
 
 ### 02 · Spielen
 Ein XY-Pad (X = VR1, Y = VR2), dessen Hintergrund eine Pixelkarte der Teilungen ist: jede Farbe ein ÷n, Helligkeit = Tonhöhe. Regler für VR1, VR2 und Lautstärke sowie ein Gate-Modus.
@@ -26,7 +26,7 @@ Ausgangsfrequenz über der Stellung von VR1. Gestrichelt: der Takt; dick: was ma
 Eine illustrative Platine mit realistischen Bauteilen: Farbringe, Keramik-Codes (103 = 10 nF) und Potiachsen folgen deinen Werten; ab 1 µF wird der Kondensator zum Elko.
 
 ### 05 · Stückliste
-Alle Bauteile mit aktuellen Werten und Codes, zum Kopieren.
+Export der Liste als PNG-Blatt im U-MA-Look: Werte, Codes, Messwerte, XY-Pad und Treppe.
 
 ## Unter der Haube
 
