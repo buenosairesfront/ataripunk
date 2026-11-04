@@ -1,4 +1,8 @@
+<!doctype html>
+<html lang="es">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>U-MA Atari Punk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Atari Punk Console con dos NE555: cambiá cada pieza, mirá el osciloscopio y escuchá la salida en vivo. U-MA サウンド">
@@ -246,6 +250,8 @@ tbody tr:hover td{background:var(--pl)}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important} }
 </style>
+</head>
+<body>
 
 <div class="app">
   <header class="top"><div class="bar" id="bar"></div></header>
@@ -836,3 +842,5 @@ renderBar();buildMain();renderSch();renderBoard();renderEditor();renderKnobs();b
 addEventListener('resize',()=>{drawScope();drawPad();drawStair();});
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>drawStair());
 </script>
+</body>
+</html>
